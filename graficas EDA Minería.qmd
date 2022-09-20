@@ -1,0 +1,54 @@
+---
+title: "boxplots EDA de MAD"
+format: html
+editor: visual
+---
+
+```{r}
+
+```
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(dplyr)
+library(ggpubr)
+library(patchwork)
+```
+
+```{r}
+#import the cleaned data bases of training set
+train<- read.csv("/cloud/project/limpieza_credito.csv")
+train2<- read.csv("/cloud/project/limpieza_credito2.csv")
+```
+
+```{r}
+train$Credit_Score <- factor(train$Credit_Score,                      levels = c('Poor','Standard', 'Good'),ordered = TRUE)
+
+#Boxplots credit_score * vars_dependientes(un boxplot por cada interaccion):
+
+bp_AN_INC=ggplot(train, aes(x=train$Credit_Score,y=Annual_Income, fill=Credit_Score))+coord_flip()+labs(title="Ingresos anuales",x="Score", y="Ingreso anual")+ geom_boxplot(alpha=0.5)+theme(legend.position = "none") 
+#ggsave("bpAN_INC.png", bp_AN_INC) descomentar si quieres guardar la grafica individual
+
+bp_RETRASO=ggplot(train, aes(x=train$Credit_Score,y=Delay_from_due_date, fill=Credit_Score))+coord_flip()+labs(title="Días de retraso",x="Score", y="Dias de retraso en pago de crédito")+ geom_boxplot(alpha=0.5)+theme(legend.position = "none") 
+#ggsave("bpRETRASO.png", bp_RETRASO)
+
+bp_DEUDA=ggplot(train, aes(x=train$Credit_Score,y=Outstanding_Debt, fill=Credit_Score))+coord_flip()+labs(title="Deuda pendiente",x="Score", y="Deuda pendiente")+ geom_boxplot(alpha=0.5)+theme(legend.position = "none") 
+#ggsave("bpDEUDA.png", bp_DEUDA)
+
+bp_NUMCUENTAS=ggplot(train, aes(x=train$Credit_Score,y=Num_Bank_Accounts, fill=Credit_Score))+coord_flip()+labs(title="Numero de cuentas",x="Score", y="Número de cuentas")+ geom_boxplot(alpha=0.5)+theme(legend.position = "none") 
+#  ggsave("bpNUMCUENTAS.png", bp_NUMCUENTAS)
+  
+  bp_NUMCREDITOS=ggplot(train, aes(x=train$Credit_Score,y=Num_of_Loan, fill=Credit_Score))+coord_flip()+labs(title="Número de créditos ",x="Score", y="Número de créditos")+ geom_boxplot(alpha=0.5)+theme(legend.position = "none") 
+ # ggsave("bpNUMCREDITOS.png", bp_NUMCREDITOS)
+  
+  bp_BALANCE=ggplot(train2, aes(x=train$Credit_Score,y=Monthly_Balance, fill=Credit_Score))+coord_flip()+labs(title="Balance mensual",x="Score", y="Dinero en cuentas mensualmente")+ geom_boxplot(alpha=0.5)+theme(legend.position = "none") 
+#ggsave("bpBALANCE.png", bp_BALANCE)
+```
+
+```{r}
+#Unimos en un panel todas las gráficas anteriores
+PANEL=ggarrange(bp_AN_INC,bp_NUMCUENTAS, bp_NUMCREDITOS,bp_RETRASO,bp_DEUDA, bp_BALANCE,
+ncol = 2, nrow = 3)
+ggsave("BOXPLOTS Var_dependienteTIMESindependientes.png", PANEL)
+```
